@@ -1,5 +1,5 @@
 # Pull base image
-ARG ARCH=
+ARG ARCH=arm64
 # AlpineLinux with a glibc-2.29-r0 and python3
 FROM --platform=linux/${ARCH} alpine:3.18
 ARG ARCH
