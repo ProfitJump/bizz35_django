@@ -1,5 +1,5 @@
 # Pull base image
-FROM --platform=linux/arm64 python:3.11
+FROM python:3.11-alpine3.18
 
 # Set environment variables
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
@@ -11,7 +11,7 @@ WORKDIR /code
 
 # Install dependencies
 COPY ./requirements.txt .
-RUN arch -arm64 pip install -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy project
 COPY . .
