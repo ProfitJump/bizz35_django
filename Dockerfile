@@ -1,5 +1,5 @@
 # Pull base image
-FROM --platform=linux/arm64/v8 python:3.11-alpine3.18
+FROM --platform=linux/arm64 python:3.11
 
 # Set environment variables
 ENV PIP_DISABLE_PIP_VERSION_CHECK 1
