@@ -28,7 +28,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ['DEBUG'] == 'True'
 
-ALLOWED_HOSTS = ['127.0.0.1', 'localhost', '5.78.71.170', 'testing.bizz35.com', 'bizz35.com']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    'localhost',
+    '5.78.71.170',
+    'testing.bizz35.com',
+    'bizz35.com']
+
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 
