@@ -91,3 +91,4 @@ fabric.properties
 /.env.dev
 /docker-compose.yml
 /docker-compose.staging.yml
+/frontend/migrations/
