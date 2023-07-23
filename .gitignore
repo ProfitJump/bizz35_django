@@ -91,4 +91,16 @@ fabric.properties
 /.env.dev
 /docker-compose.yml
 /docker-compose.staging.yml
+/venv/
+/db.sqlite3
+
+/dashboard/migrations/
+/dashboard/media/
+
+/authentication/migrations/
+/frontend/migrations
+/mainapp/migrations/
+/stripe/migrations/
+
+*.pyc
 /frontend/migrations/

@@ -1,0 +1,146 @@
+<div class="card">
+    <!--begin::Header-->
+    <div class="card-header card-header-stretch">
+        <!--begin::Title-->
+        <div class="card-title">
+            <h3>Referred Users</h3>
+        </div>
+        <!--end::Title-->
+        <!--begin::Toolbar-->
+        <div class="card-toolbar">
+            <!--begin::Tab nav-->
+            <ul class="nav nav-stretch fs-5 fw-semibold nav-line-tabs border-transparent" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <a id="referrals_tab_1" class="nav-link text-active-gray-800 me-4 active" data-bs-toggle="tab" role="tab" href="#referrals_1" aria-selected="true">All</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a id="referrals_tab_2" class="nav-link text-active-gray-800 me-4" data-bs-toggle="tab" role="tab" href="#referrals_2" aria-selected="false" tabindex="-1">Paid</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a id="referrals_tab_3" class="nav-link text-active-gray-800" data-bs-toggle="tab" role="tab" href="#referrals_3" aria-selected="false" tabindex="-1">Free</a>
+                </li>
+            </ul>
+            <!--end::Tab nav-->
+        </div>
+        <!--end::Toolbar-->
+    </div>
+    <!--end::Header-->
+    {% if referred_user %}
+        <!--begin::Tab content-->
+        <div id="kt_referred_users_tab_content" class="tab-content">
+            <!--begin::Tab panel-->
+            <div id="referrals_1" class="card-body p-0 tab-pane fade show active" role="tabpanel" aria-labelledby="referrals_tab_1">
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table table-row-bordered align-middle gy-6">
+                        <!--begin::Thead-->
+                        <thead class="border-bottom border-gray-200 fs-6 fw-bold bg-lighten">
+                        <tr>
+                            <th class="min-w-125px px-9">Username</th>
+                            <th class="min-w-125px px-0">First Name</th>
+                            <th class="min-w-125px">Last Name</th>
+                            <th class="min-w-125px">Status</th>
+                        </tr>
+                        </thead>
+                        <!--end::Thead-->
+                        <!--begin::Tbody-->
+                        {% for profiles in referred_user %}
+                            <tbody class="fs-6 fw-semibold text-gray-600">
+                            <tr>
+                                <td class="ps-9">{{ profiles.user }}</td>
+                                <td class="ps-0">{{ profiles.user.first_name }}</td>
+                                <td>{{ profiles.user.last_name }}</td>
+                                {% if profiles.membership_level == 'Free User' %}
+                                    <td class="text-danger">{{ profiles.membership_level }}</td>
+                                {% else %}
+                                    <td class="text-info">{{ profiles.membership_level }}</td>
+                                {% endif %}
+                            </tr>
+                            </tbody>
+                        {% endfor %}
+                        <!--end::Tbody-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+            </div>
+            <!--end::Tab panel-->
+            <!--begin::Tab panel-->
+            <div id="referrals_2" class="card-body p-0 tab-pane fade" role="tabpanel" aria-labelledby="referrals_tab_2">
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table table-row-bordered align-middle gy-6">
+                        <!--begin::Thead-->
+                        <thead class="border-bottom border-gray-200 fs-6 fw-bold bg-lighten">
+                        <tr>
+                            <th class="min-w-125px px-9">Username</th>
+                            <th class="min-w-125px px-0">First Name</th>
+                            <th class="min-w-125px">Last Name</th>
+                            <th class="min-w-125px">Status</th>
+                        </tr>
+                        </thead>
+                        <!--end::Thead-->
+                        <!--begin::Tbody-->
+                        {% for profiles in referred_user %}
+                            <tbody class="fs-6 fw-semibold text-gray-600">
+                            {% if profiles.membership_level != 'Free User' %}
+                                <tr>
+                                    <td class="ps-9">{{ profiles.user }}</td>
+                                    <td class="ps-0">{{ profiles.user.first_name }}</td>
+                                    <td>{{ profiles.user.last_name }}</td>
+                                    {% if profiles.membership_level == 'Free User' %}
+                                        <td class="text-danger">{{ profiles.membership_level }}</td>
+                                    {% else %}
+                                        <td class="text-info">{{ profiles.membership_level }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        {% endfor %}
+                        <!--end::Tbody-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+            </div>
+            <!--end::Tab panel-->
+        <!--begin::Tab panel-->
+            <div id="referrals_3" class="card-body p-0 tab-pane fade" role="tabpanel" aria-labelledby="referrals_tab_3">
+                <div class="table-responsive">
+                    <!--begin::Table-->
+                    <table class="table table-row-bordered align-middle gy-6">
+                        <!--begin::Thead-->
+                        <thead class="border-bottom border-gray-200 fs-6 fw-bold bg-lighten">
+                        <tr>
+                            <th class="min-w-125px px-9">Username</th>
+                            <th class="min-w-125px px-0">First Name</th>
+                            <th class="min-w-125px">Last Name</th>
+                            <th class="min-w-125px">Status</th>
+                        </tr>
+                        </thead>
+                        <!--end::Thead-->
+                        <!--begin::Tbody-->
+                        {% for profiles in referred_user %}
+                            <tbody class="fs-6 fw-semibold text-gray-600">
+                            {% if profiles.membership_level == 'Free User' %}
+                                <tr>
+                                    <td class="ps-9">{{ profiles.user }}</td>
+                                    <td class="ps-0">{{ profiles.user.first_name }}</td>
+                                    <td>{{ profiles.user.last_name }}</td>
+                                    {% if profiles.membership_level == 'Free User' %}
+                                        <td class="text-danger">{{ profiles.membership_level }}</td>
+                                    {% else %}
+                                        <td class="text-info">{{ profiles.membership_level }}</td>
+                                    {% endif %}
+                                </tr>
+                            {% endif %}
+                            </tbody>
+                        {% endfor %}
+                        <!--end::Tbody-->
+                    </table>
+                    <!--end::Table-->
+                </div>
+            </div>
+            <!--end::Tab panel-->
+        </div>
+        <!--end::Tab content-->
+    {% endif %}
+</div>

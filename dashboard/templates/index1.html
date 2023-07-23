@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+<h2>Username: {{ user.username }}</h2>
+<h2>Email: {{ user.email }}</h2>
+<h2>First Name: {{ user.first_name }}</h2>
+<h2>Last Name: {{ user.last_name }}</h2>
+
+{% if user.profile.membership_level == 'Free User' and user.profile.is_booster %}
+    <h2>Your Referral ID: Pay To Get A Code</h2>
+{% else %}
+    <h2>Your Referral ID: {{ user.profile.referral_id }}</h2>
+{% endif %}
+
+<h2>Your Referral Count: {{ count }}</h2>
+<h2>Your Referral Count of Paid Members: {{ paid_count }}</h2>
+<h2>Matrix Level: {{ user.profile.matrix_level }}</h2>
+<h2>Balance: {{ wallet }}</h2>
+<br>
+{% if referred_user %}
+    <h1>Referred Members:</h1>
+    <ul>
+        {% for profiles in referred_user %}
+            <li>{{ profiles.user }} | {{ profiles.user.first_name }} | {{ profiles.user.last_name }} | {{ profiles.membership_level }}</li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <h1>No Members Under You</h1>
+{% endif %}
+</body>
+</html>

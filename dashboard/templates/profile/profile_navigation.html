@@ -1,0 +1,241 @@
+{% load static %}
+<div class="card mb-5 mb-xl-10">
+    <div class="card-body pt-9 pb-0">
+        <!--begin::Details-->
+        <div class="d-flex flex-wrap flex-sm-nowrap mb-3">
+            <!--begin: Pic-->
+            <div class="me-7 mb-4">
+                <div class="symbol symbol-100px symbol-lg-160px symbol-fixed position-relative">
+                    {% if user.profile.image %}
+                    <img src="{{ user.profile.image.url }}" alt="profile_image"/>
+                    {% else %}
+                    <img src="{% static 'media/avatars/default.jpg' %}" alt="profile_image"/>
+                    {% endif %}
+                </div>
+            </div>
+            <!--end::Pic-->
+            <!--begin::Info-->
+            <div class="flex-grow-1">
+                <!--begin::Title-->
+                <div class="d-flex justify-content-between align-items-start flex-wrap mb-2">
+                    <!--begin::User-->
+                    <div class="d-flex flex-column">
+                        <!--begin::Name-->
+                        <div class="d-flex fw-bolder align-items-center mb-2">
+                            <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+                        </div>
+                        <!--end::Name-->
+                        <!--begin::Info-->
+                        <div class="d-flex flex-wrap fw-semibold fs-6 mb-4 pe-2">
+                            <span><h5 class="text-active-gray-500">{{ user.email }}</h5></span>
+                        </div>
+                        <!--end::Info-->
+                    </div>
+                    <!--end::User-->
+                    <!--begin::Actions-->
+                    <div class="d-flex my-4">
+                        {% if user.profile.membership_level == 'Free User' %}
+                            <a href="{% url 'stripe.membership' %}" class="btn btn-lg btn-danger me-2">Become a Member</a>
+                        {% else %}
+                            {% if user.profile.boosters >= 2 %}
+                                <a class="btn btn-lg btn-light-danger hover-elevate-down me-2" data-bs-toggle="tooltip" title="You must have less than 2 pending boosters to add more.">Buy Boosters Unavailable <i
+                                        class="fas fa-exclamation-circle ms-5 fs-lg-1"></i> </a>
+
+
+                            {% else %}
+                                <a href="{% url 'stripe.boosters' %}" class="btn btn-lg btn-success hover-scale me-2">Buy Boosters</a>
+                            {% endif %}
+                        {% endif %}
+                        <!--begin::Menu-->
+
+                        <!--end::Menu-->
+                    </div>
+                    <!--end::Actions-->
+                </div>
+                <!--end::Title-->
+                <!--begin::Stats-->
+                <div class="d-flex flex-wrap flex-stack">
+                    <!--begin::Wrapper-->
+                    <div class="d-flex flex-column flex-grow-1 pe-8">
+                        <!--begin::Stats-->
+                        <div class="d-flex flex-wrap">
+                            <!--begin::Stat-->
+                            <div class="rounded min-w-125px py-3 px-4 me-6 mb-3 shadow-lg" style="background-color: #50cd89">
+                                <!--begin::Number-->
+                                <div class="d-flex align-items-center">
+                                    <div class="fs-2 fw-bolder text-dark" data-kt-countup="true" data-kt-countup-decimal-places="2" data-kt-countup-value="{{ balance }}" data-kt-countup-prefix="$ ">0</div>
+                                </div>
+                                <!--end::Number-->
+                                <!--begin::Label-->
+                                <div class="fw-bolder fs-6 text-dark">Total Earnings</div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Stat-->
+                            <!--begin::Stat-->
+                            <div class="rounded min-w-125px py-3 px-4 me-6 mb-3 shadow-lg" style="background-color: #f1bc00">
+                                <!--begin::Number-->
+                                <div class="d-flex align-items-center">
+                                    <div class="fw-bolder fs-2 text-dark" data-kt-countup="true" data-kt-countup-decimal-places="2" data-kt-countup-value="{{ wallet }}" data-kt-countup-prefix="$ ">0</div>
+                                </div>
+                                <!--end::Number-->
+                                <!--begin::Label-->
+                                <div class="fw-bolder fs-6 text-dark">Available Balance</div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Stat-->
+                            <!--begin::Stat-->
+                            <div class="rounded min-w-125px py-3 px-4 me-6 mb-3 shadow-lg" style="background-color: #009ef7">
+                                <!--begin::Number-->
+                                <div class="d-flex align-items-center">
+                                    <div class="fw-bolder fs-2 text-dark" data-kt-countup="true" data-kt-countup-value="{{ user.profile.boosters }}">0</div>
+
+                                </div>
+                                <!--end::Number-->
+                                <!--begin::Label-->
+                                <div class="fw-bolder fs-6 text-dark">Pending Boosters</div>
+                                <!--end::Label-->
+                            </div>
+                            <!--end::Stat-->
+                        </div>
+                        <!--end::Stats-->
+                    </div>
+                    <!--end::Wrapper-->
+                    <div class="d-flex align-items-center w-200px w-sm-300px flex-column mt-3">
+                        <div class="d-flex justify-content-between w-100 mt-auto mb-2">
+                            <span class="fw-bold fs-6 text-dark">2 Free Booster Progress</span>
+                            {% if user.profile.matrix_level == 0 %}
+                                <span class="fw-bold text-dark fs-6">0 %</span>
+                            {% elif user.profile.matrix_level == 1 %}
+                                {% if user.profile.matrix_level == 1 %}
+                                    <span class="fw-bold text-dark fs-6">33.33 %</span>
+                                {% endif %}
+                            {% elif user.profile.matrix_level == 2 %}
+                                {% if user.profile.matrix_level == 2 %}
+                                    <span class="fw-bold text-dark fs-6">66.33 %</span>
+                                {% endif %}
+                            {% elif user.profile.matrix_level >= 3 %}
+                                <span class="fw-bold text-dark fs-6">100 %</span>
+                            {% endif %}
+                        </div>
+                        <div class="h-5px mx-3 w-100 bg-light mb-3">
+                            {% if user.profile.matrix_level == 0 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 0;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 1 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 33%;" aria-valuenow="33" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 2 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 66%;" aria-valuenow="66" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level >= 3 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        </div>
+                        <br>
+                        <div class="d-flex justify-content-between w-100 mt-auto mb-2">
+                            <span class="fw-bold fs-6 text-dark">4 Free Booster Progress</span>
+                            {% if user.profile.matrix_level == 0 %}
+                                <span class="fw-bold text-dark fs-6">0 %</span>
+                            {% elif user.profile.matrix_level == 1 %}
+                                <span class="fw-bold text-dark fs-6">16.66 %</span>
+                            {% elif user.profile.matrix_level == 2 %}
+                                <span class="fw-bold text-dark fs-6">33.32 %</span>
+                            {% elif user.profile.matrix_level == 3 %}
+                                <span class="fw-bold text-dark fs-6">50 %</span>
+                            {% elif user.profile.matrix_level == 4 %}
+                                <span class="fw-bold text-dark fs-6">66.33 %</span>
+                            {% elif user.profile.matrix_level == 5 %}
+                                <span class="fw-bold text-dark fs-6">82.66 %</span>
+                            {% elif user.profile.matrix_level >= 6 %}
+                                <span class="fw-bold text-dark fs-6">100 %</span>
+                            {% endif %}
+                        </div>
+                        <div class="h-5px mx-3 w-100 bg-light mb-3">
+                            {% if user.profile.matrix_level == 0 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 0;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 1 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 16%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 2 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 32%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 3 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 48%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 4 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 64%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level == 5 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 80%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% elif user.profile.matrix_level >= 6 %}
+                                <div class="bg-success rounded h-5px" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <!--end::Stats-->
+            </div>
+            <!--end::Info-->
+        </div>
+        <!--end::Details-->
+        <!--begin::Navs-->
+        <ul class="nav nav-stretch nav-line-tabs nav-line-tabs-2x border-transparent fs-5 fw-bold">
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/profile' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.index' %}">Overview</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.index' %}">Overview</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/settings' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.settings' %}">Settings</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.settings' %}">Settings</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/security' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.security' %}">Security</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.security' %}">Security</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/ewallet' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.ewallet' %}">E-Wallet</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.ewallet' %}">E-Wallet</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/statements' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.statements' %}">Statements</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.statements' %}">Statements</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/referrals' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.referrals' %}">Referrals</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.referrals' %}">Referrals</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+            <!--begin::Nav item-->
+            <li class="nav-item mt-2">
+                {% if request.get_full_path == '/dashboard/logs' %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.logs' %}">Logs</a>
+                {% else %}
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.logs' %}">Logs</a>
+                {% endif %}
+            </li>
+            <!--end::Nav item-->
+        </ul>
+    </div>
+</div>

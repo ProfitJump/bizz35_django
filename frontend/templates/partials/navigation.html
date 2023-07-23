@@ -1,0 +1,58 @@
+<nav
+        class="navbar navbar-expand-lg navbar-light bg-white z-index-3 py-3">
+    <div class="container">
+        <a class="navbar-brand" href="{% url 'frontend.index' %}">
+            Bizz35 Logo
+        </a>
+        {% if user.is_authenticated %}
+            <a href="{% url 'dashboard.index' %}" class="btn btn-sm  bg-gradient-info  btn-round mb-0 ms-auto d-lg-none d-block">DASHBOARD-</a>
+        {% else %}
+            <a href="{% url 'auth.register' %}" class="btn btn-sm  bg-gradient-primary  btn-round mb-0 ms-auto d-lg-none d-block">SIGN UP</a>
+            <a href="{% url 'auth.login' %}" class="btn btn-sm  bg-gradient-info  btn-round mb-0 ms-auto d-lg-none d-block">LOGIN</a>
+        {% endif %}
+        <button class="navbar-toggler shadow-none ms-2" type="button" data-bs-toggle="collapse" data-bs-target="#navigation" aria-controls="navigation" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon mt-2">
+        <span class="navbar-toggler-bar bar1"></span>
+        <span class="navbar-toggler-bar bar2"></span>
+        <span class="navbar-toggler-bar bar3"></span>
+      </span>
+        </button>
+        <div class="collapse navbar-collapse w-100 pt-3 pb-2 py-lg-0" id="navigation">
+            <ul class="navbar-nav navbar-nav-hover mx-auto">
+                <li class="nav-item mx-2">
+                    <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" role="button">
+                        Link 1
+                    </a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" role="button">
+                        Link 2
+                    </a>
+                </li>
+                <li class="nav-item mx-2">
+                    <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" role="button">
+                        Link 3
+                    </a>
+                </li>
+
+                <li class="nav-item mx-2">
+                    <a class="nav-link ps-2 d-flex justify-content-between cursor-pointer align-items-center" role="button">
+                        Link 4
+                    </a>
+                </li>
+            </ul>
+
+            <ul class="navbar-nav d-lg-block d-none">
+                <li class="nav-item">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'dashboard.index' %}" class="btn btn-lg  bg-gradient-info  btn-round mb-0 me-1" role="button">DASHBOARD</a>
+                    {% else %}
+                        <a href="{% url 'auth.register' %}" class="btn btn-lg  bg-gradient-primary  btn-round mb-0 me-1" role="button">SIGN UP</a>
+                        <a href="{% url 'auth.login' %}" class="btn btn-lg  bg-gradient-info  btn-round mb-0 me-1" role="button">LOGIN</a>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>

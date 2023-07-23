@@ -1,0 +1,386 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="robots" content="{% block meta_robots %}{% endblock %}">
+    <meta name="description" content="{% block meta_description %}{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}{% endblock %}">
+    <meta name="author" content="Luke Hayes - info@profitjump.dev">
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'img/apple-icon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'img/favicon.png' %}">
+    <title>Bizz35 - {% block page_title %}{% endblock %}</title>
+
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700"/>
+    <link href="{% static 'plugins/custom/fullcalendar/fullcalendar.bundle.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'plugins/custom/datatables/datatables.bundle.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'plugins/global/plugins.bundle.css' %}" rel="stylesheet" type="text/css"/>
+    <link href="{% static 'css/style.bundle.css' %}" rel="stylesheet" type="text/css"/>
+
+
+<body class="{% block body_class %}{% endblock %}">
+{% block pagecontent %}{% endblock %}
+
+<!--   Core JS Files   -->
+<script src="{% static 'plugins/global/plugins.bundle.js' %}"></script>
+<script src="{% static 'plugins/custom/fullcalendar/fullcalendar.bundle.js' %}"></script>
+<script src="{% static 'plugins/custom/datatables/datatables.bundle.js' %}"></script>
+<script src="{% static 'js/scripts.bundle.js' %}"></script>
+<script src="{% static 'js/widgets.bundle.js' %}"></script>
+
+<script src="{% static 'js/custom/widgets.js' %}"></script>
+<script src="{% static 'js/custom/apps/chat/chat.js' %}"></script>
+
+<script src="{% static 'js/custom/account/billing/general.js' %}"></script>
+<script src="{% static 'js/custom/account/referrals/referral-program.js' %}"></script>
+
+<script src="{% static 'js/custom/pages/user-profile/general.js' %}"></script>
+
+<script src="{% static 'js/custom/utilities/modals/upgrade-plan.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/create-app.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/offer-a-deal/type.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/offer-a-deal/details.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/offer-a-deal/finance.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/offer-a-deal/complete.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/offer-a-deal/main.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/new-card.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/new-address.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/users-search.js' %}"></script>
+<script src="{% static 'js/custom/utilities/modals/new-target.js' %}"></script>
+
+<script src="{% static 'main.js' %}"></script>
+<script src="https://js.stripe.com/v3/"></script>
+
+
+<script>
+    $(document).ready(function () {
+        $('#kt_modal_new_card_form1').submit(function (event) {
+            event.preventDefault();  // prevent default form submission behavior
+            var formData = $(this).serialize();  // get form data
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'dashboard.ewallet' %}',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: response.message,
+                        icon: "success",
+                        confirmButtonText: "Okay",
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                        },
+                    }).then(() => {
+                        const modal = document.getElementById("kt_modal_new_card");
+                        $(modal).modal("hide");
+                        location.reload();
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 500);
+                    });
+                },
+
+                error: function (response) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: response.responseJSON.message,
+                        icon: "error",
+                        confirmButtonText: "Okay",
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                        },
+                    });
+                }
+            });
+        });
+
+        const cancelButton = document.getElementById("card-cancel-button");
+        cancelButton.addEventListener("click", function () {
+            const modal = document.getElementById("kt_modal_new_card");
+            $(modal).modal("hide");
+            // clear form fields
+            $('#kt_modal_new_card_form1').trigger("reset");
+            // clear select2 fields
+            $('#card_expiry_month').val(null).trigger('change');
+            $('#card_expiry_year').val(null).trigger('change');
+        });
+
+        const modal = document.getElementById("kt_modal_new_card");
+        modal.addEventListener("hidden.bs.modal", function () {
+            // clear form fields
+            $('#kt_modal_new_card_form1').trigger("reset");
+            // clear select2 fields
+            $('#card_expiry_month').val(null).trigger('change');
+            $('#card_expiry_year').val(null).trigger('change');
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#kt_modal_new_bank_form').submit(function (event) {
+            event.preventDefault();// prevent default form submission behavior
+            var accountName = $('#account_name').val().trim();
+
+            if (accountName === '') {
+                const errorMessage = "Please provide an account name.";
+                Swal.fire({
+                    title: "Error!",
+                    text: errorMessage,
+                    icon: "error",
+                    confirmButtonText: "Okay",
+                    customClass: {
+                        confirmButton: "btn btn-success",
+                    },
+                });
+                return false;
+            }
+
+            var formData = $(this).serialize();  // get form data
+
+            $.ajax({
+                type: 'POST',
+                url: '{% url 'dashboard.ewallet' %}',
+                data: formData,
+                success: function (response) {
+                    Swal.fire({
+                        title: "Success!",
+                        text: response.message,
+                        icon: "success",
+                        confirmButtonText: "Okay",
+                        customClass: {
+                            confirmButton: "btn btn-success",
+                        },
+                    }).then(() => {
+                        const modal = document.getElementById("kt_modal_new_bank");
+                        $(modal).modal("hide");
+                        location.href = '#kt_billing_bank';
+                        location.reload();
+                        setTimeout(() => {
+                            window.scrollTo(0, 0);
+                        }, 500);
+                    });
+                },
+
+                error: function (response) {
+                    if (response.responseJSON.message.includes("You passed an empty string for 'bank_account[routing_number]'")) {
+                        const errorMessage = "Please provide a valid routing number.";
+                        Swal.fire({
+                            title: "Error!",
+                            text: errorMessage,
+                            icon: "error",
+                            confirmButtonText: "Okay",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        });
+                    } else if (response.responseJSON.message.includes("You passed an empty string for 'bank_account[account_number]'")) {
+                        const errorMessage = "Please provide a valid account number.";
+                        Swal.fire({
+                            title: "Error!",
+                            text: errorMessage,
+                            icon: "error",
+                            confirmButtonText: "Okay",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: response.responseJSON.message,
+                            icon: "error",
+                            confirmButtonText: "Okay",
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        });
+                    }
+                }
+
+
+            });
+        });
+
+        const cancelButton = document.getElementById("bank-cancel-button");
+        cancelButton.addEventListener("click", function () {
+            const modal = document.getElementById("kt_modal_new_bank");
+            $(modal).modal("hide");
+            // clear form fields
+            $('#kt_modal_new_bank_form').trigger("reset");
+        });
+
+        const modal = document.getElementById("kt_modal_new_bank");
+        modal.addEventListener("hidden.bs.modal", function () {
+            // clear form fields
+            $('#kt_modal_new_bank_form').trigger("reset");
+        });
+    });
+</script>
+
+<script>
+    const deleteButtons = document.querySelectorAll('.delete-account-button');
+    deleteButtons.forEach((button) => {
+        button.addEventListener('click', function () {
+            var accountId = this.getAttribute('data-account-id');
+            var externalAccountId = this.getAttribute('data-external-account-id');
+            if (accountId && externalAccountId) {
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'This will delete the external account permanently!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Delete',
+                    cancelButtonText: 'Cancel',
+                    customClass: {
+                        confirmButton: "btn btn-danger",
+                        cancelButton: "btn btn-warning",
+                    },
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        fetch('delete_external_account/' + accountId + '/' + externalAccountId + '/', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRFToken': '{{ csrf_token }}'
+                            }
+                        })
+                            .then(response => response.json())
+                            .then(data => {
+                                if (data.success) {
+                                    Swal.fire({
+                                        title: 'Your external account has been deleted successfully.',
+                                        icon: 'success',
+                                        showCloseButton: true,
+                                        confirmButtonText: 'Close',
+                                        customClass: {
+                                            confirmButton: "btn btn-success",
+                                        },
+                                    }).then(() => {
+                                        setTimeout(() => {
+                                            location.reload();
+                                        }, 500);
+                                    });
+                                } else {
+                                    if (data.error.includes("default external account")) {
+                                        const errorMessage = "You cannot delete your default external account. Please choose another external account and try again.";
+                                        Swal.fire({
+                                            title: "Error!",
+                                            text: errorMessage,
+                                            icon: "error",
+                                            confirmButtonText: "Okay",
+                                            customClass: {
+                                                confirmButton: "btn btn-success",
+                                            },
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: 'Error deleting external account.',
+                                            text: data.error,
+                                            icon: 'error',
+                                            showCloseButton: true,
+                                            confirmButtonText: 'Okay',
+                                            customClass: {
+                                                confirmButton: "btn-success",
+                                            },
+                                        });
+                                    }
+                                }
+                            })
+                            .catch(error => {
+                                Swal.fire({
+                                    title: 'Error deleting external account.',
+                                    text: error,
+                                    icon: 'error',
+                                    showCloseButton: true,
+                                    confirmButtonText: 'Okay',
+                                    customClass: {
+                                        confirmButton: "btn btn-success",
+                                    },
+                                });
+                            });
+                    }
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Missing account ID or external account ID. Please contact support.'
+                });
+            }
+        });
+    });
+</script>
+
+<script>
+    const updateButtons = document.querySelectorAll('.update-account-button');
+    updateButtons.forEach((button) => {
+        button.addEventListener('click', function () {
+            var accountId = this.getAttribute('data-account-id');
+            var externalAccountId = this.getAttribute('data-external-account-id');
+            if (accountId && externalAccountId) {
+                fetch('update_external_account/' + accountId + '/' + externalAccountId + '/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'This has account has been marked as the default account.',
+                                icon: 'success',
+                                showCloseButton: true,
+                                confirmButtonText: 'Close',
+                                customClass: {
+                                    confirmButton: "btn btn-success",
+                                },
+                            }).then(() => {
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 500);
+                            });
+                        } else {
+                            Swal.fire({
+                                title: 'Error updating your external account.',
+                                text: data.error,
+                                icon: 'error',
+                                showCloseButton: true,
+                                confirmButtonText: 'Okay',
+                                customClass: {
+                                    confirmButton: "btn-success",
+                                },
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            title: 'Error updating your external account.',
+                            text: error,
+                            icon: 'error',
+                            showCloseButton: true,
+                            confirmButtonText: 'Okay',
+                            customClass: {
+                                confirmButton: "btn btn-success",
+                            },
+                        });
+                    });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Missing account ID or external account ID. Please contact support.'
+                });
+            }
+        });
+    });
+</script>
+
+
+</body>
+
+</html>

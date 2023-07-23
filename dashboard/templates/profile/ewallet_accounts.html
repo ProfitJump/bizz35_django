@@ -1,0 +1,546 @@
+{% load static %}
+<div class="card mb-5 mb-xl-10">
+    <!--begin::Card header-->
+    <div class="card-header card-header-stretch pb-0">
+        <!--begin::Title-->
+        <div class="card-title">
+            <h3 class="m-0">Payment Methods</h3>
+        </div>
+        <!--end::Title-->
+        <!--begin::Toolbar-->
+        <div class="card-toolbar m-0">
+            <!--begin::Tab nav-->
+            <ul class="nav nav-stretch nav-line-tabs border-transparent" role="tablist">
+                <!--begin::Tab item-->
+                <li class="nav-item" role="presentation">
+                    <a id="kt_billing_creditcard_tab" class="nav-link fs-5 fw-bold me-5 active" data-bs-toggle="tab" role="tab" href="#kt_billing_creditcard" aria-selected="true">Credit / Debit Card</a>
+                </li>
+                <!--end::Tab item-->
+                <!--begin::Tab item-->
+                <li class="nav-item" role="presentation">
+                    <a id="kt_billing_bank_tab" class="nav-link fs-5 fw-bold" data-bs-toggle="tab" role="tab" href="#kt_billing_bank" aria-selected="false" tabindex="-1">Bank Accounts</a>
+                </li>
+                <!--end::Tab item-->
+            </ul>
+            <!--end::Tab nav-->
+        </div>
+        <!--end::Toolbar-->
+    </div>
+    <!--end::Card header-->
+    <!--begin::Tab content-->
+    <div id="kt_billing_payment_tab_content" class="card-body tab-content">
+        <!--begin::Tab panel-->
+        <div id="kt_billing_creditcard" class="tab-pane fade show active" role="tabpanel" aria-labelledby="#kt_billing_creditcard_tab">
+
+            <div class="row gx-9 gy-6">
+                {% for card_account in card_accounts %}
+                    <!--begin::Col-->
+                    <div class="col-xl-6" data-kt-billing-element="card">
+                        <!--begin::Card-->
+
+                        <div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6">
+
+                            <!--begin::Info-->
+
+                            <div class="d-flex flex-column py-2">
+                                <!--begin::Owner-->
+                                <div class="d-flex align-items-center fs-4 fw-bold mb-5">{{ card_account.name }}
+                                    {% if card_account.default_for_currency == True %}
+                                        <span class="badge badge-light-success fs-7 ms-2">Default Card</span>
+                                    {% endif %}
+                                </div>
+                                <!--end::Owner-->
+                                <!--begin::Wrapper-->
+                                <div class="d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    {% if card_account.brand == 'Visa' %}
+                                        <img src="{% static 'media/svg/card-logos/visa.svg' %}" alt="" class="me-4">
+                                    {% elif card_account.brand == 'MasterCard' %}
+                                        <img src="{% static 'media/svg/card-logos/mastercard.svg' %}" alt="" class="me-4">
+                                    {% endif %}
+                                    <!--end::Icon-->
+                                    <!--begin::Details-->
+                                    <div>
+                                        <div class="fs-4 fw-bold">{{ card_account.brand }} **** {{ card_account.last4 }}</div>
+                                        <div class="fs-6 fw-semibold text-gray-400">Card expires at {{ card_account.exp_month }}/{{ card_account.exp_year }}
+                                            <br>
+                                            {% if 'instant' in card_account.available_payout_methods %}
+                                                <span class="badge badge-light-success fs-7 ms-2">Instant Eligible</span>
+                                            {% else %}
+                                                <span class="badge badge-light-danger fs-7 ms-2">Standard Payout Only</span>
+                                            {% endif %}</div>
+                                    </div>
+                                    <!--end::Details-->
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <!--end::Info-->
+                            <!--begin::Actions-->
+                            <div class="d-flex align-items-center py-2">
+                                <button class="btn btn-sm btn-danger btn-active-light-primary me-3 delete-account-button" data-account-id="{{ card_account.account }}" data-external-account-id="{{ card_account.id }}">Delete</button>
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-color-gray-400 btn-active-light-primary me-3 update-account-button" data-account-id="{{ card_account.account }}" data-external-account-id="{{ card_account.id }}">Make Default</button>
+                            </div>
+                            <!--end::Actions-->
+
+                        </div>
+
+                        <!--end::Card-->
+                    </div>
+                {% endfor %}
+                <!--end::Col-->
+                <div class="col-xl-6">
+                    <!--begin::Notice-->
+                    <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed h-lg-100 p-6">
+                        <!--begin::Wrapper-->
+                        {% if not user.stripe.connect_id or user.stripe.connect_id == "" %}
+                            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                <!--begin::Content-->
+                                <div class="mb-3 mb-md-0 fw-semibold">
+                                    <h4 class="text-danger fw-bold">Important Note!</h4>
+                                    <div class="fs-6 text-gray-700 pe-7">You currently do not have a Bizz35 distribution wallet. Please connect your account or
+                                        create a new wallet.
+                                    </div>
+                                </div>
+                                <!--end::Content-->
+                                <!--begin::Action-->
+                                <a href="{% url 'store.authorize' %}" class="btn btn-warning px-6 align-self-center text-nowrap">Connect Account</a>
+                                <!--end::Action-->
+                            </div>
+                        {% else %}
+                            {% if account_disabled == 'requirements.past_due' or kyc_items is True %}
+                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                    <!--begin::Content-->
+                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                        <h4 class="text-danger fw-bold">Important Note!</h4>
+                                        <div class="fs-6 text-gray-700 pe-7">Your E-Wallet is currently disabled. Please correct any outstanding requirements
+                                            to enable your E-Wallet.
+                                        </div>
+                                    </div>
+                                    <!--end::Content-->
+                                    <!--begin::Action-->
+                                    <a href="{% url 'store.initial_requirements' %}" class="btn btn-danger px-6 align-self-center text-nowrap">Enable E-Wallet</a>
+                                    <!--end::Action-->
+                                </div>
+                            {% else %}
+                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                    <!--begin::Content-->
+                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                        <h4 class="text-danger fw-bold">Important Note!</h4>
+                                        <div class="fs-6 text-gray-700 pe-7">By adding a new card you accept the
+                                            <a href="#" class="fw-bold me-1">Terms & Conditions.</a> Only debit cards are supported at this time.
+                                        </div>
+                                    </div>
+                                    <!--end::Content-->
+                                    <!--begin::Action-->
+                                    <a href="#" class="btn btn-success px-6 align-self-center text-nowrap" data-bs-toggle="modal" data-bs-target="#kt_modal_new_card">Add Card</a>
+                                    <!--end::Action-->
+                                </div>
+                            {% endif %}
+                            <!--end::Wrapper-->
+                        {% endif %}
+                    </div>
+                    <!--end::Notice-->
+                </div>
+            </div>
+
+        </div>
+        <!--end::Tab panel-->
+        <!--begin::Tab panel-->
+        <div id="kt_billing_bank" class="tab-pane fade" role="tabpanel" aria-labelledby="kt_billing_bank">
+
+            <div class="row gx-9 gy-6">
+                {% for bank_account in bank_accounts %}
+                    <!--begin::Col-->
+                    <div class="col-xl-6" data-kt-billing-element="card">
+                        <!--begin::Card-->
+
+                        <div class="card card-dashed h-xl-100 flex-row flex-stack flex-wrap p-6">
+
+                            <!--begin::Info-->
+
+                            <div class="d-flex flex-column py-2">
+                                <!--begin::Owner-->
+                                <div class="d-flex align-items-center fs-4 fw-bold mb-5">{{ bank_account.account_holder_name }}
+                                    {% if bank_account.default_for_currency == True %}
+                                        <span class="badge badge-light-success fs-7 ms-2">Default Account</span>
+                                    {% endif %}
+                                </div>
+                                <!--end::Owner-->
+                                <!--begin::Wrapper-->
+                                <div class="d-flex align-items-center">
+                                    <!--begin::Icon-->
+                                    <img src="{% static 'media/svg/payment-methods/bank.svg' %}" alt="" class="me-4" width="40" height="40">
+
+                                    <!--end::Icon-->
+                                    <!--begin::Details-->
+                                    <div>
+                                        <div class="fs-4 fw-bold">{{ bank_account.bank_name }} <br> **** {{ bank_account.last4 }}</div>
+                                        <div class="fs-6 fw-semibold text-gray-400">
+                                            <br>
+                                            {% if 'instant' in bank_account.available_payout_methods %}
+                                                <span class="badge badge-light-success fs-7 ms-2">Instant Eligible</span>
+                                            {% else %}
+                                                <span class="badge badge-light-danger fs-7 ms-2">Standard Payout Only</span>
+                                            {% endif %}</div>
+                                    </div>
+                                    <!--end::Details-->
+                                </div>
+                                <!--end::Wrapper-->
+                            </div>
+                            <!--end::Info-->
+                            <!--begin::Actions-->
+                            <div class="d-flex align-items-center py-2">
+                                <button class="btn btn-sm btn-danger btn-active-light-primary me-3 delete-account-button" data-account-id="{{ bank_account.account }}" data-external-account-id="{{ bank_account.id }}">Delete</button>
+                                {% csrf_token %}
+                                <button class="btn btn-sm btn-color-gray-400 btn-active-light-primary me-3 update-account-button" data-account-id="{{ bank_account.account }}" data-external-account-id="{{ bank_account.id }}">Make Default</button>
+                            </div>
+                            <!--end::Actions-->
+
+                        </div>
+
+                        <!--end::Card-->
+                    </div>
+                {% endfor %}
+                <!--end::Col-->
+                <div class="col-xl-6">
+                    <!--begin::Notice-->
+                    <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed h-lg-100 p-6">
+                        <!--begin::Wrapper-->
+                        {% if not user.stripe.connect_id or user.stripe.connect_id == "" %}
+                            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                <!--begin::Content-->
+                                <div class="mb-3 mb-md-0 fw-semibold">
+                                    <h4 class="text-danger fw-bold">Important Note!</h4>
+                                    <div class="fs-6 text-gray-700 pe-7">You currently do not have a Bizz35 distribution wallet. Please connect your account or
+                                        create a new wallet.
+                                    </div>
+                                </div>
+                                <!--end::Content-->
+                                <!--begin::Action-->
+                                <a href="{% url 'store.authorize' %}" class="btn btn-warning px-6 align-self-center text-nowrap">Connect Account</a>
+                                <!--end::Action-->
+                            </div>
+                        {% else %}
+                            {% if account_disabled == 'requirements.past_due' or kyc_items is True %}
+                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                    <!--begin::Content-->
+                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                        <h4 class="text-danger fw-bold">Important Note!</h4>
+                                        <div class="fs-6 text-gray-700 pe-7">Your E-Wallet is currently disabled. Please correct any outstanding requirements
+                                            to enable your E-Wallet.
+                                        </div>
+                                    </div>
+                                    <!--end::Content-->
+                                    <!--begin::Action-->
+                                    <a href="{% url 'store.initial_requirements' %}" class="btn btn-danger px-6 align-self-center text-nowrap">Enable E-Wallet</a>
+                                    <!--end::Action-->
+                                </div>
+                            {% else %}
+                                <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                                    <!--begin::Content-->
+                                    <div class="mb-3 mb-md-0 fw-semibold">
+                                        <h4 class="text-danger fw-bold">Important Note!</h4>
+                                        <div class="fs-6 text-gray-700 pe-7">By adding a new bank account you accept the
+                                            <a href="#" class="fw-bold me-1">Terms & Conditions.</a>Only USA bank accounts are supported at this time.
+                                        </div>
+                                    </div>
+                                    <!--end::Content-->
+                                    <!--begin::Action-->
+                                    <a href="#" class="btn btn-success px-6 align-self-center text-nowrap" data-bs-toggle="modal" data-bs-target="#kt_modal_new_bank">Add Account</a>
+                                    <!--end::Action-->
+                                </div>
+                            {% endif %}
+                            <!--end::Wrapper-->
+                        {% endif %}
+                    </div>
+                    <!--end::Notice-->
+                </div>
+            </div>
+
+        </div>
+        <!--end::Tab panel-->
+    </div>
+    <!--end::Tab content-->
+</div>
+
+<div class="modal fade" id="kt_modal_new_card" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header">
+                <!--begin::Modal title-->
+                <h2>Add New Debit Card</h2>
+                <!--end::Modal title-->
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor"></rect>
+									<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor"></rect>
+								</svg>
+							</span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Form-->
+                <form id="kt_modal_new_card_form1" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{% url 'dashboard.ewallet' %}" method="POST">
+                    {% csrf_token %}
+                    <!--begin::Input group-->
+                    <input type="hidden" name="form_name" value="new_external_card_form">
+                    <div class="d-flex flex-column mb-7 fv-row fv-plugins-icon-container">
+                        <!--begin::Label-->
+                        <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                            <span class="required">Name On Card</span>
+                            <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" aria-label="Specify a card holder's name" data-bs-original-title="Specify a card holder's name" data-kt-initialized="1"></i>
+                        </label>
+                        <!--end::Label-->
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter the name on the card" name="card_name">
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="d-flex flex-column mb-7 fv-row fv-plugins-icon-container">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold form-label mb-2">Card Number</label>
+                        <!--end::Label-->
+                        <!--begin::Input wrapper-->
+                        <div class="position-relative">
+                            <!--begin::Input-->
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter card number" name="card_number">
+                            <!--end::Input-->
+                            <!--begin::Card logos-->
+                            <div class="position-absolute translate-middle-y top-50 end-0 me-5">
+                                <img src="{% static 'media/svg/card-logos/visa.svg' %}" alt="" class="h-25px">
+                                <img src="{% static 'media/svg/card-logos/mastercard.svg' %}" alt="" class="h-25px">
+                                <img src="{% static 'media/svg/card-logos/american-express.svg' %}" alt="" class="h-25px">
+                            </div>
+                            <!--end::Card logos-->
+                        </div>
+                        <!--end::Input wrapper-->
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="row mb-10">
+                        <!--begin::Col-->
+                        <div class="col-md-8 fv-row">
+                            <!--begin::Label-->
+                            <label class="required fs-6 fw-semibold form-label mb-2">Expiration Date</label>
+                            <!--end::Label-->
+                            <!--begin::Row-->
+                            <div class="row fv-row fv-plugins-icon-container">
+                                <!--begin::Col-->
+                                <div class="col-6">
+                                    <select name="card_expiry_month" id="card_expiry_month" class="form-select form-select-solid" data-control="select2" data-dropdown-parent="#kt_modal_new_card" data-hide-search="true"
+                                            data-placeholder="Month">
+                                        <option></option>
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                        <option value="5">5</option>
+                                        <option value="6">6</option>
+                                        <option value="7">7</option>
+                                        <option value="8">8</option>
+                                        <option value="9">9</option>
+                                        <option value="10">10</option>
+                                        <option value="11">11</option>
+                                        <option value="12">12</option>
+                                    </select>
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                <!--end::Col-->
+
+                                <!--begin::Col-->
+                                <div class="col-6">
+                                    <select name="card_expiry_year" id="card_expiry_year" class="form-select form-select-solid" data-control="select2" data-dropdown-parent="#kt_modal_new_card" data-hide-search="true"
+                                            data-placeholder="Year">
+                                        <option></option>
+                                        <option value="2023">2023</option>
+                                        <option value="2024">2024</option>
+                                        <option value="2025">2025</option>
+                                        <option value="2026">2026</option>
+                                        <option value="2027">2027</option>
+                                        <option value="2028">2028</option>
+                                        <option value="2029">2029</option>
+                                        <option value="2030">2030</option>
+                                        <option value="2031">2031</option>
+                                        <option value="2032">2032</option>
+                                        <option value="2033">2033</option>
+                                        <option value="2034">2034</option>
+                                        <option value="2035">2035</option>
+                                        <option value="2036">2036</option>
+                                        <option value="2037">2037</option>
+                                    </select>
+                                    <div class="fv-plugins-message-container invalid-feedback"></div>
+                                </div>
+                                <!--end::Col-->
+                            </div>
+                            <!--end::Row-->
+                        </div>
+                        <!--end::Col-->
+                        <!--begin::Col-->
+                        <div class="col-md-4 fv-row fv-plugins-icon-container">
+                            <!--begin::Label-->
+                            <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                                <span class="required">CVV</span>
+                                <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" aria-label="Enter a card CVV code" data-bs-original-title="Enter a card CVV code" data-kt-initialized="1"></i>
+                            </label>
+                            <!--end::Label-->
+                            <!--begin::Input wrapper-->
+                            <div class="position-relative">
+                                <!--begin::Input-->
+                                <input type="text" class="form-control form-control-solid" minlength="3" maxlength="4" placeholder="CVV" name="card_cvv">
+                                <!--end::Input-->
+                                <!--begin::CVV icon-->
+                                <div class="position-absolute translate-middle-y top-50 end-0 me-3">
+                                    <!--begin::Svg Icon | path: icons/duotune/finance/fin002.svg-->
+                                    <span class="svg-icon svg-icon-2hx">
+												<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M22 7H2V11H22V7Z" fill="currentColor"></path>
+													<path opacity="0.3"
+                                                          d="M21 19H3C2.4 19 2 18.6 2 18V6C2 5.4 2.4 5 3 5H21C21.6 5 22 5.4 22 6V18C22 18.6 21.6 19 21 19ZM14 14C14 13.4 13.6 13 13 13H5C4.4 13 4 13.4 4 14C4 14.6 4.4 15 5 15H13C13.6 15 14 14.6 14 14ZM16 15.5C16 16.3 16.7 17 17.5 17H18.5C19.3 17 20 16.3 20 15.5C20 14.7 19.3 14 18.5 14H17.5C16.7 14 16 14.7 16 15.5Z"
+                                                          fill="currentColor"></path>
+												</svg>
+											</span>
+                                    <!--end::Svg Icon-->
+                                </div>
+                                <!--end::CVV icon-->
+                            </div>
+                            <!--end::Input wrapper-->
+                            <div class="fv-plugins-message-container invalid-feedback"></div>
+                        </div>
+                        <!--end::Col-->
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Actions-->
+                    <div class="text-center pt-15">
+                        <button type="button" id="card-cancel-button" class="btn btn-light me-3 ">Cancel</button>
+                        <button type="submit" id="" class="btn btn-primary">
+                            <span class="indicator-label">Submit</span>
+                            <span class="indicator-progress">Please wait...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+                        </button>
+                    </div>
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+<div class="modal fade" id="kt_modal_new_bank" tabindex="-1" aria-hidden="true">
+    <!--begin::Modal dialog-->
+    <div class="modal-dialog modal-dialog-centered mw-650px">
+        <!--begin::Modal content-->
+        <div class="modal-content">
+            <!--begin::Modal header-->
+            <div class="modal-header">
+                <!--begin::Modal title-->
+                <h2>Add New Bank Account</h2>
+                <!--end::Modal title-->
+                <!--begin::Close-->
+                <div class="btn btn-sm btn-icon btn-active-color-primary" data-bs-dismiss="modal">
+                    <!--begin::Svg Icon | path: icons/duotune/arrows/arr061.svg-->
+                    <span class="svg-icon svg-icon-1">
+								<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<rect opacity="0.5" x="6" y="17.3137" width="16" height="2" rx="1" transform="rotate(-45 6 17.3137)" fill="currentColor"></rect>
+									<rect x="7.41422" y="6" width="16" height="2" rx="1" transform="rotate(45 7.41422 6)" fill="currentColor"></rect>
+								</svg>
+							</span>
+                    <!--end::Svg Icon-->
+                </div>
+                <!--end::Close-->
+            </div>
+            <!--end::Modal header-->
+            <!--begin::Modal body-->
+            <div class="modal-body scroll-y mx-5 mx-xl-15 my-7">
+                <!--begin::Form-->
+                <form id="kt_modal_new_bank_form" class="form fv-plugins-bootstrap5 fv-plugins-framework" action="{% url 'dashboard.ewallet' %}" method="POST">
+                    {% csrf_token %}
+                    <!--begin::Input group-->
+                    <input type="hidden" name="form_name" value="new_external_bank_form">
+                    <div class="d-flex flex-column mb-7 fv-row fv-plugins-icon-container">
+                        <!--begin::Label-->
+                        <label class="d-flex align-items-center fs-6 fw-semibold form-label mb-2">
+                            <span class="required">Account Holders Name</span>
+                            <i class="fas fa-exclamation-circle ms-2 fs-7" data-bs-toggle="tooltip" aria-label="Specify a card holder's name" data-bs-original-title="Specify a card holder's name" data-kt-initialized="1"></i>
+                        </label>
+                        <!--end::Label-->
+                        <input type="text" class="form-control form-control-solid" placeholder="Enter the name on the account" name="account_name" id="account_name">
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Input group-->
+                    <div class="d-flex flex-column mb-7 fv-row fv-plugins-icon-container">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold form-label mb-2">Routing Number</label>
+                        <!--end::Label-->
+                        <!--begin::Input wrapper-->
+                        <div class="position-relative">
+                            <!--begin::Input-->
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter routing number" name="routing_number">
+                            <!--end::Input-->
+
+                        </div>
+                        <!--end::Input wrapper-->
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                    <div class="d-flex flex-column mb-7 fv-row fv-plugins-icon-container">
+                        <!--begin::Label-->
+                        <label class="required fs-6 fw-semibold form-label mb-2">Account Number</label>
+                        <!--end::Label-->
+                        <!--begin::Input wrapper-->
+                        <div class="position-relative">
+                            <!--begin::Input-->
+                            <input type="text" class="form-control form-control-solid" placeholder="Enter account number" name="account_number">
+                            <!--end::Input-->
+
+                        </div>
+                        <!--end::Input wrapper-->
+                        <div class="fv-plugins-message-container invalid-feedback"></div>
+                    </div>
+                    <!--end::Input group-->
+                    <!--begin::Actions-->
+                    <div class="text-center pt-15">
+                        <button type="button" id="bank-cancel-button" class="btn btn-light me-3 ">Cancel</button>
+                        <button type="submit" id="" class="btn btn-primary">
+                            <span class="indicator-label">Submit</span>
+                            <span class="indicator-progress">Please wait...
+            <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+        </span>
+                        </button>
+                    </div>
+                    <!--end::Actions-->
+                </form>
+                <!--end::Form-->
+            </div>
+            <!--end::Modal body-->
+        </div>
+        <!--end::Modal content-->
+    </div>
+    <!--end::Modal dialog-->
+</div>
+
+
+
+
+
+
+
+
+
+

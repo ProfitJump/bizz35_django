@@ -1,0 +1,133 @@
+<div class="card mb-5 mb-xl-10">
+    <!--begin::Body-->
+    <div class="card-body py-10">
+        <h2 class="mb-9">Referral Program</h2>
+        <!--begin::Overview-->
+        <div class="row mb-10">
+            <!--begin::Col-->
+            <div class="col-xl-6 mb-15 mb-xl-0 pe-5">
+                <h4 class="mb-0">How The Referral Program Works...</h4>
+                <p class="fs-6 fw-semibold text-gray-600 py-4 m-0">For every community member that you refer and pays the
+                    <br>lifetime membership, you will receive continuing bonuses <br> upon signing
+                    up three members and beyond!</p>
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col-xl-6">
+                <h4 class="text-gray-800 mb-0">Your Referral Link</h4>
+                <br>
+                {% if user.profile.membership_level == 'Free User' and user.profile.is_booster %}
+                    <div class="d-flex">
+                        <input id="kt_referral_link_input" type="text" class="form-control form-control-solid me-3 flex-grow-1" name="search" value="Please become a paid member to get a code.">
+                    </div>
+                {% else %}
+                    <div class="d-flex">
+                        <input id="kt_referral_link_input" type="text" class="form-control form-control-solid me-3 flex-grow-1" name="search" value="{{ domain }}{{ user.profile.referral_id }}">
+                        <button id="kt_referral_program_link_copy_btn" class="btn btn-light btn-active-light-primary fw-bold flex-shrink-0" data-clipboard-target="#kt_referral_link_input">Copy Link</button>
+                    </div>
+                {% endif %}
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Overview-->
+        <!--begin::Stats-->
+        <div class="row">
+            <!--begin::Col-->
+            <div class="col">
+                <div class="card card-dashed flex-center min-w-175px my-3 p-6">
+                    <span class="fs-4 fw-semibold text-success pb-1 px-2">Taxable Earnings</span>
+                    <span class="fs-lg-2tx fw-bold d-flex justify-content-center">$
+                        <span data-kt-countup="true" data-kt-countup-decimal-places="2" data-kt-countup-value="{{ balance }}">0</span></span>
+                </div>
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col">
+                <div class="card card-dashed flex-center min-w-175px my-3 p-6">
+                    <span class="fs-4 fw-semibold text-warning pb-1 px-2">Withdrawal Balance</span>
+                    <span class="fs-lg-2tx fw-bold d-flex justify-content-center">$
+												<span data-kt-countup="true" data-kt-countup-decimal-places="2" data-kt-countup-value="{{ wallet }}">0</span></span>
+                </div>
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col">
+                <div class="card card-dashed flex-center min-w-175px my-3 p-6">
+                    <span class="fs-4 fw-semibold text-danger pb-1 px-2">Total Referrals</span>
+                    <span class="fs-lg-2tx fw-bold d-flex justify-content-center">
+												<span data-kt-countup="true" data-kt-countup-value="{{ count }}">0</span></span>
+                </div>
+            </div>
+            <!--end::Col-->
+            <!--begin::Col-->
+            <div class="col">
+                <div class="card card-dashed flex-center min-w-175px my-3 p-6">
+                    <span class="fs-4 fw-semibold text-info pb-1 px-2">Total Referrals Paid</span>
+                    <span class="fs-lg-2tx fw-bold d-flex justify-content-center">
+												<span data-kt-countup="true" data-kt-countup-value="{{ paid_count }}">0</span></span>
+                </div>
+            </div>
+            <!--end::Col-->
+        </div>
+        <!--end::Stats-->
+        <br>
+        <!--begin::Notice-->
+        <div class="notice d-flex bg-light-primary rounded border-primary border border-dashed p-6">
+            <!--begin::Icon-->
+            <!--begin::Svg Icon | path: icons/duotune/finance/fin001.svg-->
+            <span class="svg-icon svg-icon-2tx svg-icon-primary me-4">
+											<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+												<path d="M20 19.725V18.725C20 18.125 19.6 17.725 19 17.725H5C4.4 17.725 4 18.125 4 18.725V19.725H3C2.4 19.725 2 20.125 2 20.725V21.725H22V20.725C22 20.125 21.6 19.725 21 19.725H20Z"
+                                                      fill="currentColor"></path>
+												<path opacity="0.3"
+                                                      d="M22 6.725V7.725C22 8.325 21.6 8.725 21 8.725H18C18.6 8.725 19 9.125 19 9.725C19 10.325 18.6 10.725 18 10.725V15.725C18.6 15.725 19 16.125 19 16.725V17.725H15V16.725C15 16.125 15.4 15.725 16 15.725V10.725C15.4 10.725 15 10.325 15 9.725C15 9.125 15.4 8.725 16 8.725H13C13.6 8.725 14 9.125 14 9.725C14 10.325 13.6 10.725 13 10.725V15.725C13.6 15.725 14 16.125 14 16.725V17.725H10V16.725C10 16.125 10.4 15.725 11 15.725V10.725C10.4 10.725 10 10.325 10 9.725C10 9.125 10.4 8.725 11 8.725H8C8.6 8.725 9 9.125 9 9.725C9 10.325 8.6 10.725 8 10.725V15.725C8.6 15.725 9 16.125 9 16.725V17.725H5V16.725C5 16.125 5.4 15.725 6 15.725V10.725C5.4 10.725 5 10.325 5 9.725C5 9.125 5.4 8.725 6 8.725H3C2.4 8.725 2 8.325 2 7.725V6.725L11 2.225C11.6 1.925 12.4 1.925 13.1 2.225L22 6.725ZM12 3.725C11.2 3.725 10.5 4.425 10.5 5.225C10.5 6.025 11.2 6.725 12 6.725C12.8 6.725 13.5 6.025 13.5 5.225C13.5 4.425 12.8 3.725 12 3.725Z"
+                                                      fill="currentColor"></path>
+											</svg>
+										</span>
+            <!--end::Svg Icon-->
+            <!--end::Icon-->
+            <!--begin::Wrapper-->
+            <div class="d-flex flex-stack flex-grow-1 flex-wrap flex-md-nowrap">
+                <!--begin::Content-->
+                <div class="mb-3 mb-md-0 fw-semibold">
+                    <h4 class="text-gray-900 fw-bold">Withdraw Your Available Balance</h4>
+                    <div class="fs-6 text-gray-700 pe-7">You can withdraw your money securely to your bank account. A withdrawal fee of 1.5% is applied to all withdrawals.
+                        Withdrawals can take upto 3 business days to complete.
+                    </div>
+                </div>
+                <!--end::Content-->
+                <!--begin::Action-->
+            <a href="{% url 'stripe.authorize' %}" class="btn btn-warning px-6 align-self-center text-nowrap">Connect Account</a>
+                {% if not user.stripe.connect_id %}
+                    <a href="{% url 'stripe.authorize' %}" class="btn btn-warning px-6 align-self-center text-nowrap">Connect Account</a>
+                {% elif wallet > 0 %}
+                    <a href="#" class="btn btn-success px-6 align-self-center text-nowrap">Withdraw Balance 1</a>
+                {% elif wallet <= 0 %}
+                    <button type="button" id="kt_docs_sweetalert_basic" class="btn btn-danger px-6 align-self-center text-nowrap">Withdraw Balance 2</button>
+
+                {% endif %}
+                <!--end::Action-->
+            </div>
+            <!--end::Wrapper-->
+        </div>
+        <!--end::Notice-->
+    </div>
+    <!--end::Body-->
+</div>
+<script>
+    const button = document.getElementById('kt_docs_sweetalert_basic');
+
+    button.addEventListener('click', e => {
+        e.preventDefault();
+
+        Swal.fire({
+            text: "Your available balance has nothing to withdraw. If this is in error please contact support.",
+            icon: "error",
+            buttonsStyling: false,
+            confirmButtonText: "Ok, got it!",
+            customClass: {
+                confirmButton: "btn btn-danger"
+            }
+        });
+    });
+</script>

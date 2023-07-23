@@ -1,22 +1,25 @@
 # Import/lode all files and packages needed to run the setting file.
-from pathlib import Path
-from dotenv import load_dotenv
-from django.core.management.utils import get_random_secret_key
-import dj_database_url
-import sys
 import os
+import sys
+import dj_database_url
+from pathlib import Path
+from django.contrib import staticfiles
+from django.contrib.messages import constants as messages
+from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
 
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # SECURITY WARNING: Keep the secret key used in production secret!
 # SECURITY WARNING: Don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", "False") == "True"
 DEVELOPMENT_MODE = os.getenv("DEVELOPMENT_MODE", "False") == "True"
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
+USE_SPACES = os.getenv('USE_SPACES') == 'True'
+SITE_ID = 1
 if DEVELOPMENT_MODE is True:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -29,11 +32,13 @@ else:
 
 ALLOWED_HOSTS = [
     '*',
-    ]
+]
 
 # Redirect to home URL after login (Default redirects to /accounts/profile/)
-LOGIN_REDIRECT_URL = ''
-LOGIN_URL = 'accounts/login/'
+AUTH_USER_MODEL = 'authentication.User'
+LOGIN_URL = 'auth.login'
+LOGIN_REDIRECT_URL = '/dashboard/profile'
+LOGOUT_REDIRECT_URL = '/'
 
 # Application definition
 
@@ -45,9 +50,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'storages',
 
     # Custom Applications
+    'authentication',
+    'dashboard',
     'frontend',
+    'stripe',
 ]
 
 MIDDLEWARE = [
@@ -134,22 +144,55 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'America/Denver'
 
 USE_I18N = True
-
+USE_L10N = True
 USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'mainapp/staticfiles')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend/templates/static'),
+    os.path.join(BASE_DIR, 'stripe/templates/static'),
+    os.path.join(BASE_DIR, 'dashboard/templates/static'),
 )
-STATIC_ROOT = BASE_DIR / "mainapp/staticfiles"
+
+if USE_SPACES is True:
+    AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
+    AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+    AWS_DEFAULT_ACL = 'public-read'
+    AWS_S3_ENDPOINT_URL = 'https://data1.profitjump.network:9000'
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400'
+    }
+    AWS_MEDIA_LOCATION = 'public_media'
+    PUBLIC_MEDIA_LOCATION = 'public_media'
+    MEDIA_URL = f'https://{AWS_STORAGE_BUCKET_NAME}.{AWS_S3_ENDPOINT_URL}/{PUBLIC_MEDIA_LOCATION}/'
+    DEFAULT_FILE_STORAGE = 'mainapp.storage_backends.MediaStorage'
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'mainapp/staticfiles/media')
+    MEDIA_URL = '/media/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MESSAGE_TAGS = {
+    messages.DEBUG: 'alert-secondary',
+    messages.INFO: 'alert-info',
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning',
+    messages.ERROR: 'alert-danger',
+}
+
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY_TEST") if DEBUG is True else os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUB_KEY = os.getenv("STRIPE_PUB_KEY_TEST") if DEBUG is True else os.getenv("STRIPE_PUB_KEY")
+STRIPE_ENDPOINT_SECRET = os.getenv("STRIPE_ENDPOINT_SECRET_TEST") if DEBUG is True else os.getenv("STRIPE_ENDPOINT_SECRET")
+STRIPE_CONNECT_CLIENT_ID = os.getenv("STRIPE_CONNECT_CLIENT_ID_TEST") if DEBUG is True else os.getenv("STRIPE_CONNECT_CLIENT_ID")
+STRIPE_DOMAIN = os.getenv("STRIPE_DOMAIN_TEST") if DEBUG is True else os.getenv("STRIPE_DOMAIN")
