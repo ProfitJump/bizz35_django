@@ -9,5 +9,5 @@ urlpatterns = [
     re_path(r'^', include('frontend.urls')),
     re_path('dashboard/', include('dashboard.urls')),
     re_path('auth/', include('authentication.urls')),
-    re_path('stripe/', include('stripe.urls')),
+    re_path('stripe_api/', include('stripe_api.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

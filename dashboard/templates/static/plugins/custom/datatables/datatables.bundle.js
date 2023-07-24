@@ -1091,7 +1091,7 @@
 				];
 			}
 			
-			/* Remove row stripe classes if they are already on the table row */
+			/* Remove row stripe_api classes if they are already on the table row */
 			var stripeClasses = oSettings.asStripeClasses;
 			var rowOne = $this.children('tbody').find('tr').eq(0);
 			if ( $.inArray( true, $.map( stripeClasses, function(el, i) {
@@ -9608,8 +9608,8 @@
 					.css( 'width', settings.sDestroyWidth )
 					.removeClass( classes.sTable );
 	
-				// If the were originally stripe classes - then we add them back here.
-				// Note this is not fool proof (for example if not all rows had stripe
+				// If the were originally stripe_api classes - then we add them back here.
+				// Note this is not fool proof (for example if not all rows had stripe_api
 				// classes - but it's a good effort without getting carried away
 				ien = settings.asDestroyStripes.length;
 	
@@ -10491,7 +10491,7 @@
 		 * array may be of any length, and DataTables will apply each class
 		 * sequentially, looping when required.
 		 *  @type array
-		 *  @default null <i>Will take the values determined by the `oClasses.stripe*`
+		 *  @default null <i>Will take the values determined by the `oClasses.stripe_api*`
 		 *    options</i>
 		 *
 		 *  @dtopt Option

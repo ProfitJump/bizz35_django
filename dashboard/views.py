@@ -5,12 +5,12 @@ from django.shortcuts import render
 from django.contrib.sites.models import Site
 
 from django.conf import settings
-import stripe
+import stripe_api
 
 from dashboard.models import Profile, LedgerEntry
-from stripe.models import Stripe as StripeProfile
+from stripe_api.models import Stripe as StripeProfile
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+stripe_api.api_key = settings.STRIPE_SECRET_KEY
 
 
 @login_required
@@ -47,7 +47,7 @@ def ewallet(request):
             get_user = StripeProfile.objects.get(user_id=request.user.id)
             account_id = get_user.connect_id
 
-            token = stripe.Token.create(
+            token = stripe_api.Token.create(
                 card={
                     "number": card_number,
                     "exp_month": card_expiry_month,
@@ -59,7 +59,7 @@ def ewallet(request):
             ).id
 
             # Create external account
-            stripe.Account.create_external_account(
+            stripe_api.Account.create_external_account(
                 account_id,
                 external_account=token,
                 stripe_account=account_id,
@@ -78,7 +78,7 @@ def ewallet(request):
             get_user = StripeProfile.objects.get(user_id=request.user.id)
             account_id = get_user.connect_id
 
-            token = stripe.Token.create(
+            token = stripe_api.Token.create(
                 bank_account={
                     "country": "US",
                     "currency": "usd",
@@ -90,7 +90,7 @@ def ewallet(request):
             ).id
 
             # Create external account
-            stripe.Account.create_external_account(
+            stripe_api.Account.create_external_account(
                 account_id,
                 external_account=token,
                 stripe_account=account_id,
@@ -101,13 +101,13 @@ def ewallet(request):
             response = {'message': message}
             return JsonResponse(response)
 
-    except stripe.error.CardError as e:
+    except stripe_api.error.CardError as e:
         message = str(e.user_message)
         response = {'message': message}
         print('ERROR', message)
         return JsonResponse(response, status=400)
 
-    except stripe.error.StripeError as e:
+    except stripe_api.error.StripeError as e:
         message = str(e.user_message)
         response = {'message': message}
         print('ERROR', message)
@@ -124,7 +124,7 @@ def ewallet(request):
         account_id = get_user.connect_id
 
         if account_id is not None and account_id != '':
-            account = stripe.Account.retrieve(account_id)
+            account = stripe_api.Account.retrieve(account_id)
             disabled_status = account.requirements.disabled_reason
             kyc_items = account.requirements.currently_due
 
@@ -137,7 +137,7 @@ def ewallet(request):
                 get_user.save()
                 kyc_items = get_user.disabled
 
-            external_card_accounts = stripe.Account.list_external_accounts(
+            external_card_accounts = stripe_api.Account.list_external_accounts(
                 account_id,
                 limit=100  # The maximum number of external accounts to retrieve (default is 10)
             )
@@ -262,24 +262,24 @@ def add_ledger_entry(request, user, des, debit, credit, ledger, is_public):
 
 def delete_external_account(request, account_id, external_account_id):
     try:
-        stripe.Account.delete_external_account(
+        stripe_api.Account.delete_external_account(
             account_id,
             external_account_id
         )
         return JsonResponse({'success': True})
 
-    except stripe.error.InvalidRequestError as e:
+    except stripe_api.error.InvalidRequestError as e:
         return JsonResponse({'error': str(e)})
 
 
 def update_external_account(request, account_id, external_account_id):
     try:
-        stripe.Account.modify_external_account(
+        stripe_api.Account.modify_external_account(
             account_id,
             external_account_id,
             default_for_currency=True,
         )
         return JsonResponse({'success': True})
 
-    except stripe.error.InvalidRequestError as e:
+    except stripe_api.error.InvalidRequestError as e:
         return JsonResponse({'error': str(e)})

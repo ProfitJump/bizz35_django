@@ -3,7 +3,7 @@ from django.db import models
 from django.db import transaction
 
 from authentication.models import User
-from stripe.models import Stripe
+from stripe_api.models import Stripe
 from mainapp.storage_backends import PublicMediaStorage, PrivateMediaStorage
 
 import json

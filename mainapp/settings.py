@@ -57,7 +57,7 @@ INSTALLED_APPS = [
     'authentication',
     'dashboard',
     'frontend',
-    'stripe',
+    'stripe_api',
 ]
 
 MIDDLEWARE = [
@@ -157,7 +157,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'mainapp/staticfiles')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'frontend/templates/static'),
-    os.path.join(BASE_DIR, 'stripe/templates/static'),
+    os.path.join(BASE_DIR, 'stripe_api/templates/static'),
     os.path.join(BASE_DIR, 'dashboard/templates/static'),
 )
 

@@ -8,8 +8,8 @@ from .api_twilio.account_verification_email import two_step_email, two_step_emai
 from .models import User
 from dashboard.models import Profile as UserProfile
 from dashboard.api_referrals.generate_referral import new_referral_id
-from stripe.models import Stripe as StripeCustomer
-from stripe.views import create_customer as newstripecustomer
+from stripe_api.models import Stripe as StripeCustomer
+from stripe_api.views import create_customer as newstripecustomer
 
 
 # Create your views here.

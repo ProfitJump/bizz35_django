@@ -100,7 +100,6 @@ fabric.properties
 /authentication/migrations/
 /frontend/migrations
 /mainapp/migrations/
-/stripe/migrations/
+/stripe_api/migrations/
 
 *.pyc
-/frontend/migrations/

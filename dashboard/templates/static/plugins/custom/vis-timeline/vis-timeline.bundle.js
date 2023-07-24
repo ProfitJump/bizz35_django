@@ -43848,7 +43848,7 @@ var ClusterItem = /*#__PURE__*/function (_Item) {
       this._repaintOnItemUpdateTimeTooltip(this.dom.box);
     }
     /**
-     * check is stripe visible
+     * check is stripe_api visible
      * @return {number}
      * @private
      */
