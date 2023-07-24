@@ -94,12 +94,8 @@ fabric.properties
 /venv/
 /db.sqlite3
 
-/dashboard/migrations/
+
 /dashboard/media/
 
-/authentication/migrations/
-/frontend/migrations
-/mainapp/migrations/
-/stripe_api/migrations/
 
 *.pyc

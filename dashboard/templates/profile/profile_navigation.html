@@ -185,18 +185,18 @@
             <!--begin::Nav item-->
             <li class="nav-item mt-2">
                 {% if request.get_full_path == '/dashboard/settings' %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.settings' %}">Settings</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.index' %}">Settings</a>
                 {% else %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.settings' %}">Settings</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.index' %}">Settings</a>
                 {% endif %}
             </li>
             <!--end::Nav item-->
             <!--begin::Nav item-->
             <li class="nav-item mt-2">
                 {% if request.get_full_path == '/dashboard/security' %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.security' %}">Security</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.index' %}">Security</a>
                 {% else %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.security' %}">Security</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.index' %}">Security</a>
                 {% endif %}
             </li>
             <!--end::Nav item-->
@@ -212,9 +212,9 @@
             <!--begin::Nav item-->
             <li class="nav-item mt-2">
                 {% if request.get_full_path == '/dashboard/statements' %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.statements' %}">Statements</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5 active" href="{% url 'dashboard.index' %}">Statements</a>
                 {% else %}
-                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.statements' %}">Statements</a>
+                    <a class="nav-link text-active-primary ms-0 me-10 py-5" href="{% url 'dashboard.index' %}">Statements</a>
                 {% endif %}
             </li>
             <!--end::Nav item-->
