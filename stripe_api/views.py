@@ -23,6 +23,7 @@ import stripe
 import time
 import os
 import urllib
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -263,7 +264,12 @@ def stripe_webhook(request):
             get_profile.save()
 
     print("DEBUG2 = HttpResponse(status=200)")
-    return HttpResponse(status=200)
+    response_data = {
+        "status": "success",
+        "message": "Webhook processed successfully."
+    }
+    response_json = json.dumps(response_data)
+    return HttpResponse(response_json, content_type='application/json', status=200)
 
 
 class StripeAuthorizeView(View):
