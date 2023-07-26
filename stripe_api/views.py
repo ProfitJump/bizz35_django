@@ -237,10 +237,12 @@ def stripe_webhook(request):
                         commission_owner.profile.membership_level = 'Level 3 Affiliate'
                         commission_owner.profile.boosters = commission_owner.profile.boosters + 2
                         commission_owner.profile.save()
+                        print("Added 2 Boosters")
 
                     if commission_matrix == 6:
                         commission_owner.profile.boosters = commission_owner.profile.boosters + 4
                         commission_owner.profile.save()
+                        print("Added 4 Boosters")
 
                 return redirect('dashboard.index')
             else:
