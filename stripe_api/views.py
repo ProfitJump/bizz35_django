@@ -244,8 +244,8 @@ def stripe_webhook(request):
                         commission_owner.profile.save()
                         print("Added 4 Boosters")
 
-                print("DEBUG1 = HttpResponse(status=200)")
-                return HttpResponse(status=200)
+                # print("DEBUG1 = HttpResponse(status=200)")
+                # return HttpResponse(status=200)
             else:
                 print('Hit Pass Statement')
                 pass
