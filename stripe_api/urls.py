@@ -13,4 +13,5 @@ urlpatterns = [
     path('oauth/callback/', stripe_views.StripeAuthorizeCallbackView.as_view(), name='stripe.authorize_callback'),
     path('delete_external_account/<str:account_id>/<str:external_account_id>/', dashboard_views.delete_external_account, name='stripe.delete_external_account'),
     path('update_external_account/<str:account_id>/<str:external_account_id>/', dashboard_views.update_external_account, name='stripe.update_external_account'),
+    path('history/', stripe_views.payment_history, name='stripe.history'),
 ]

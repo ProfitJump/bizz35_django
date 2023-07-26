@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.conf import settings
-from django.http.response import JsonResponse, HttpResponse, HttpResponseRedirect
+from django.http.response import JsonResponse, HttpResponse, HttpResponseRedirect, StreamingHttpResponse
 from django.urls import reverse
 from django.views import View
 from django.views.decorators.csrf import csrf_exempt
@@ -85,6 +85,10 @@ def create_checkout_session(request):
                         'price': os.getenv("STRIPE_MEMBERSHIP_PRICE"),
                     }
                 ],
+                metadata={
+                    "product_id": os.getenv('STRIPE_MEMBERSHIP'),  # Add any additional metadata as needed
+                    # Add more metadata key-value pairs as required
+                },
             )
             session = checkout_session['url']
             return redirect(session)
@@ -174,6 +178,7 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event['type'] == 'checkout.session.completed':
+        print("Checkout Session Completed")
         session_id = event.data.object['id']
         line_items = stripe.checkout.Session.list_line_items(session_id)
         checkout_type = line_items.data[0]['price']['product']
@@ -206,8 +211,9 @@ def stripe_webhook(request):
                     time.sleep(1)
                     add_ledger_entry(request, user=commission_owner, des=f'Membership Credited', debit=37, credit=0, ledger='SportsPro', is_public=True)
 
-                    commission_matrix = commission_matrix + 1
-                    commission_matrix.save()
+                    commission_owner.profile.matrix_level = commission_owner.profile.matrix_level + 1
+                    commission_owner.profile.save()
+
                     if commission_matrix == 1:
                         commission_owner.profile.membership_level = 'Level 1 Affiliate'
                         commission_owner.profile.save()
@@ -226,6 +232,7 @@ def stripe_webhook(request):
 
                     commission_owner.profile.matrix_level = commission_owner.profile.matrix_level + 1
                     commission_owner.profile.save()
+
                     if commission_matrix == 3:
                         commission_owner.profile.membership_level = 'Level 3 Affiliate'
                         commission_owner.profile.boosters = commission_owner.boosters + 2
@@ -381,3 +388,25 @@ def transfer_funds(amount, currency, destination_account_id):
     except stripe.error.InvalidRequestError as e:
         # Handle any errors that occur during the transfer
         print("Transfer failed:", e)
+
+
+def payment_history(request):
+    stripe.api_key = settings.STRIPE_SECRET_KEY
+    customer_id = 'cus_Nad0LvTTcJB0iC'
+    payment_intents = stripe.PaymentIntent.list(customer=customer_id)
+    payment_methods = stripe.PaymentMethod.list(customer=customer_id)
+    charges = stripe.Charge.list(customer=customer_id)
+    # print("Payment Intent:", payment_intents)
+    # print("Payment Methods:", payment_intents)
+    # print("Payment Charges:", charges)
+    # for payment_intent in payment_intents:
+    #     status = payment_intent["status"]
+    #     amount = payment_intent["amount"] / 100  # Divide by 100 to get the amount in dollars (assuming currency is USD)
+    #     print(f"Payment Status: {status}, Amount Charged: ${amount}")
+    for charge in charges.data:
+        status = charge.status
+        amount = charge.amount / 100  # Divide by 100 to get the amount in dollars (assuming currency is USD)
+        outcome = charge.outcome.seller_message
+        last4 = charge.payment_method_details.card.last4
+        print(f"Charge Status: {status}, Amount Charged: ${amount}, Last4: {last4}, Outcome: {outcome}")
+    pass

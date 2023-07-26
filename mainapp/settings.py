@@ -97,9 +97,13 @@ WSGI_APPLICATION = 'mainapp.wsgi.application'
 
 if DEVELOPMENT_MODE is True:
     DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('db_name'),
+            'USER': os.getenv('db_user'),
+            'PASSWORD': os.getenv('db_pass'),
+            'HOST': os.getenv('db_host'),
+            'PORT': os.getenv('db_port')
         }
     }
 elif len(sys.argv) > 0 and sys.argv[1] != 'collectstatic':
@@ -166,7 +170,7 @@ if USE_SPACES is True:
     AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY')
     AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
     AWS_DEFAULT_ACL = 'public-read'
-    AWS_S3_ENDPOINT_URL = 'https://data1.profitjump.network:9000'
+    AWS_S3_ENDPOINT_URL = 'https://data1.profitjump.network'
     AWS_S3_OBJECT_PARAMETERS = {
         'CacheControl': 'max-age=86400'
     }
@@ -191,8 +195,24 @@ MESSAGE_TAGS = {
     messages.ERROR: 'alert-danger',
 }
 
-STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY_TEST") if DEBUG is True else os.getenv("STRIPE_SECRET_KEY")
-STRIPE_PUB_KEY = os.getenv("STRIPE_PUB_KEY_TEST") if DEBUG is True else os.getenv("STRIPE_PUB_KEY")
-STRIPE_ENDPOINT_SECRET = os.getenv("STRIPE_ENDPOINT_SECRET_TEST") if DEBUG is True else os.getenv("STRIPE_ENDPOINT_SECRET")
-STRIPE_CONNECT_CLIENT_ID = os.getenv("STRIPE_CONNECT_CLIENT_ID_TEST") if DEBUG is True else os.getenv("STRIPE_CONNECT_CLIENT_ID")
-STRIPE_DOMAIN = os.getenv("STRIPE_DOMAIN_TEST") if DEBUG is True else os.getenv("STRIPE_DOMAIN")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_SECRET_KEY")
+STRIPE_PUB_KEY = os.getenv("STRIPE_PUB_KEY_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_PUB_KEY")
+STRIPE_ENDPOINT_SECRET = os.getenv("STRIPE_ENDPOINT_SECRET_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_ENDPOINT_SECRET")
+STRIPE_CONNECT_CLIENT_ID = os.getenv("STRIPE_CONNECT_CLIENT_ID_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_CONNECT_CLIENT_ID")
+STRIPE_DOMAIN = os.getenv("STRIPE_DOMAIN_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_DOMAIN")
+
+LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler'
+            },
+        },
+        'loggers': {
+            '': {  # 'catch all' loggers by referencing it with the empty string
+                'handlers': ['console'],
+                'level': 'DEBUG',
+            },
+        },
+    }
