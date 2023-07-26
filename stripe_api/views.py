@@ -244,7 +244,8 @@ def stripe_webhook(request):
                         commission_owner.profile.save()
                         print("Added 4 Boosters")
 
-                return redirect('dashboard.index')
+                print("DEBUG1 = HttpResponse(status=200)")
+                return HttpResponse(status=200)
             else:
                 print('Hit Pass Statement')
                 pass
@@ -261,6 +262,7 @@ def stripe_webhook(request):
             get_profile.boosters += booster_qty
             get_profile.save()
 
+    print("DEBUG2 = HttpResponse(status=200)")
     return HttpResponse(status=200)
 
 
