@@ -29,11 +29,11 @@ def user_login(request):
             else:
                 return redirect(reverse('dashboard.index'))
         else:
-            if username is "":
+            if username == "":
                 messages.error(request, "Please enter a valid username.")
                 return redirect('auth.login')
 
-            if password is "":
+            if password == "":
                 messages.error(request, "Please enter a valid password.")
                 return redirect('auth.login')
 
