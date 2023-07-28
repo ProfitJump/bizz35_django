@@ -52,6 +52,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django.contrib.sites',
     'storages',
+    'hijack',
+    'hijack.contrib.admin',
 
     # Custom Applications
     'authentication',
@@ -69,6 +71,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'hijack.middleware.HijackUserMiddleware',
 ]
 
 ROOT_URLCONF = 'mainapp.urls'
@@ -202,17 +205,17 @@ STRIPE_CONNECT_CLIENT_ID = os.getenv("STRIPE_CONNECT_CLIENT_ID_TEST") if DEVELOP
 STRIPE_DOMAIN = os.getenv("STRIPE_DOMAIN_TEST") if DEVELOPMENT_MODE is True else os.getenv("STRIPE_DOMAIN")
 
 LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler'
-            },
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler'
         },
-        'loggers': {
-            '': {  # 'catch all' loggers by referencing it with the empty string
-                'handlers': ['console'],
-                'level': 'DEBUG',
-            },
+    },
+    'loggers': {
+        '': {  # 'catch all' loggers by referencing it with the empty string
+            'handlers': ['console'],
+            'level': 'DEBUG',
         },
-    }
+    },
+}
