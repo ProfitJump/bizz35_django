@@ -374,7 +374,7 @@ class StripeRequirementsView(View):
             account_link = stripe.AccountLink.create(
                 account=account_id,
                 refresh_url='https://bizz35.com/stripe_api/oauth/callback',
-                return_url='https://bizz35.cfom/stripe_api/oauth/callback',
+                return_url='https://bizz35.com/stripe_api/oauth/callback',
                 type='custom_account_verification',
                 collect="eventually_due",
             )
