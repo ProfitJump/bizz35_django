@@ -20,7 +20,7 @@
                 <td>{{ entry.description }}</td>
                 <td>{% if entry.debit %}${{ entry.debit }}{% endif %}</td>
                 <td>{% if entry.credit %}${{ entry.credit }}{% endif %}{% if entry.credit %}-${{ entry.credit }}{% endif %}</td>
-                <td>${{ entry.user_balance }}</td>
+{#                <td>${{ entry.user_balance }}</td>#}
                 <td>{{ entry.ledger_name }}</td>
                 <td>{{ entry.is_public }}</td>
             </tr>
