@@ -215,7 +215,7 @@ def sports_ledger(request):
         user_balance += entry.debit - entry.credit
         entry.user_balance = user_balance
         entry.save()
-    user_ledger = LedgerEntry.objects.filter(user=request.user).order_by('-timestamp')
+    user_ledger = LedgerEntry.objects.filter(user=request.user, ledger_name='SportsPro').order_by('-timestamp')
 
     blue_ledger = LedgerEntry.objects.filter(ledger_name='Blue').order_by('timestamp')
     blue_balance = 0
