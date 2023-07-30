@@ -192,7 +192,7 @@ def referrals(request):
 
 @login_required
 def logs(request):
-    user_ledger = LedgerEntry.objects.filter(user=request.user).exclude(ledger_name='blue').order_by('timestamp')
+    user_ledger = LedgerEntry.objects.filter(user=request.user).exclude(ledger_name='Blue').order_by('timestamp')
     user_balance = 0
     for entry in user_ledger:
         user_balance += entry.debit - entry.credit
