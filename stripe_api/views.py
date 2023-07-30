@@ -366,15 +366,15 @@ class StripeAuthorizeCallbackView(View):
 
 class StripeRequirementsView(View):
     def get(self, request):
-        url = 'http://localhost:8000/stripe/oauth/callback'
+        url = 'https://bizz35.com/stripe_api/oauth/callback'
         get_customer_id = StripeProfile.objects.get(user_id=request.user.id)
         account_id = get_customer_id.connect_id
 
         try:
             account_link = stripe.AccountLink.create(
                 account=account_id,
-                refresh_url='http://localhost:8000/stripe/oauth/callback',
-                return_url='http://localhost:8000/stripe/oauth/callback',
+                refresh_url='https://bizz35.com/stripe_api/oauth/callback',
+                return_url='https://bizz35.cfom/stripe_api/oauth/callback',
                 type='custom_account_verification',
                 collect="eventually_due",
             )
