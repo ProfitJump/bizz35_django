@@ -198,7 +198,7 @@ def logs(request):
         user_balance += entry.debit - entry.credit
         entry.user_balance = user_balance
         entry.save()
-    user_ledger = LedgerEntry.objects.filter(user=request.user).order_by('-timestamp')
+    user_ledger = LedgerEntry.objects.filter(user=request.user).exclude(ledger_name='blue').order_by('-timestamp')
 
     context = {
         'entries': user_ledger,
