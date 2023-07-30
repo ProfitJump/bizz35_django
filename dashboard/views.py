@@ -209,7 +209,7 @@ def logs(request):
 
 @login_required
 def sports_ledger(request):
-    user_ledger = LedgerEntry.objects.filter(user=request.user).order_by('timestamp')
+    user_ledger = LedgerEntry.objects.filter(user=request.user, ledger_name='SportsPro').order_by('timestamp')
     user_balance = 0
     for entry in user_ledger:
         user_balance += entry.debit - entry.credit
